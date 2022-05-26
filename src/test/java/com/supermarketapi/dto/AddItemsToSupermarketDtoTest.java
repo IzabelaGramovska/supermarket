@@ -36,8 +36,7 @@ class AddItemsToSupermarketDtoTest {
         itemList.add(itemOne);
         itemList.add(itemTwo);
 
-        Supermarket supermarket = new Supermarket(UUID.randomUUID().toString(), "Kaufland", "Bulgaria", "Sofia",
-                "Knyaginya Klementina 189", "0895678900", "07:00-22:30", itemList);
+        Supermarket supermarket = new Supermarket(UUID.randomUUID().toString(), "Kaufland", "Bulgaria", "Sofia", "Knyaginya Klementina 189", "0895678900", "07:00-22:30", itemList);
 
         addItemsToSupermarketDto = new AddItemsToSupermarketDto(supermarket.getId(), itemsIds);
     }
@@ -64,8 +63,7 @@ class AddItemsToSupermarketDtoTest {
 
         Set<ConstraintViolation<AddItemsToSupermarketDto>> constraintViolations = validator.validate(addItemsToSupermarketDto);
 
-        constraintViolations.forEach(constraintViolation -> assertEquals(constraintViolation.getMessage(),
-                "Please provide a supermarket id."));
+        constraintViolations.forEach(constraintViolation -> assertEquals(constraintViolation.getMessage(), "Please provide a supermarket id."));
 
         AssertionsForClassTypes.assertThat(constraintViolations.size()).isOne();
     }
@@ -80,8 +78,7 @@ class AddItemsToSupermarketDtoTest {
 
         Set<ConstraintViolation<AddItemsToSupermarketDto>> constraintViolations = validator.validate(addItemsToSupermarketDto);
 
-        constraintViolations.forEach(constraintViolation -> assertEquals(constraintViolation.getMessage(),
-                "Please provide a valid supermarket id."));
+        constraintViolations.forEach(constraintViolation -> assertEquals(constraintViolation.getMessage(), "Please provide a valid supermarket id."));
 
         AssertionsForClassTypes.assertThat(constraintViolations.size()).isOne();
     }
@@ -96,8 +93,7 @@ class AddItemsToSupermarketDtoTest {
 
         Set<ConstraintViolation<AddItemsToSupermarketDto>> constraintViolations = validator.validate(addItemsToSupermarketDto);
 
-        constraintViolations.forEach(constraintViolation -> assertEquals(constraintViolation.getMessage(),
-                "Please provide items ids."));
+        constraintViolations.forEach(constraintViolation -> assertEquals(constraintViolation.getMessage(), "Please provide items ids."));
 
         AssertionsForClassTypes.assertThat(constraintViolations.size()).isOne();
     }

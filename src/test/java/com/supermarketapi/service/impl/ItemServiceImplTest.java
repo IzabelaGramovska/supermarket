@@ -2,7 +2,6 @@ package com.supermarketapi.service.impl;
 
 import com.supermarketapi.common.ItemType;
 import com.supermarketapi.dto.ItemDto;
-import com.supermarketapi.exception.ItemNotFoundException;
 import com.supermarketapi.model.Item;
 import com.supermarketapi.repository.ItemRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,9 +19,7 @@ import org.modelmapper.ModelMapper;
 
 import java.util.UUID;
 
-import static com.supermarketapi.common.ExceptionMessages.ITEM_NOT_FOUND;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)

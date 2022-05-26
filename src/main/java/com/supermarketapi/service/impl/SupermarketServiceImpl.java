@@ -45,16 +45,14 @@ public class SupermarketServiceImpl implements SupermarketService {
 
     @Override
     public AddItemsToSupermarketDtoResponse addItemsToSupermarket(AddItemsToSupermarketDto addItemsToSupermarketDto) {
-        Supermarket supermarket = supermarketRepository.findById(addItemsToSupermarketDto.getSupermarketId()).
-                orElseThrow(() -> new SupermarketNotFoundException(ExceptionMessages.SUPERMARKET_NOT_FOUND));
+        Supermarket supermarket = supermarketRepository.findById(addItemsToSupermarketDto.getSupermarketId()).orElseThrow(() -> new SupermarketNotFoundException(ExceptionMessages.SUPERMARKET_NOT_FOUND));
 
         List<Item> items = findItemsByIdFromList(addItemsToSupermarketDto.getItemsIds());
         supermarket.setItems(items);
 
         Supermarket savedSupermarket = supermarketRepository.save(supermarket);
 
-        return new AddItemsToSupermarketDtoResponse(savedSupermarket.getId(),
-                findItemsByNameFromList(supermarket.getItems()));
+        return new AddItemsToSupermarketDtoResponse(savedSupermarket.getId(), findItemsByNameFromList(supermarket.getItems()));
     }
 
     private List<Item> findItemsByIdFromList(List<String> listOfItemsIds) {
@@ -80,26 +78,22 @@ public class SupermarketServiceImpl implements SupermarketService {
 
     @Override
     public SupermarketDtoResponse getSupermarketById(String supermarketId) {
-        Supermarket supermarket = supermarketRepository.findById(supermarketId).
-                orElseThrow(() -> {
-                    throw new SupermarketNotFoundException(ExceptionMessages.SUPERMARKET_NOT_FOUND);
-                });
+        Supermarket supermarket = supermarketRepository.findById(supermarketId).orElseThrow(() -> {
+            throw new SupermarketNotFoundException(ExceptionMessages.SUPERMARKET_NOT_FOUND);
+        });
 
         List<ItemDto> itemsDto = mapsItemsToItemsDto(supermarket.getItems());
 
-        return new SupermarketDtoResponse(supermarket.getName(), supermarket.getCountry(), supermarket.getCity(),
-                supermarket.getStreet(),
-                supermarket.getPhoneNumber(), supermarket.getWorkHours(), itemsDto);
+        return new SupermarketDtoResponse(supermarket.getName(), supermarket.getCountry(), supermarket.getCity(), supermarket.getStreet(), supermarket.getPhoneNumber(), supermarket.getWorkHours(), itemsDto);
     }
 
     @Override
     public SupermarketDto supermarketUpdate(SupermarketDto supermarketDto, String supermarketId) {
         Supermarket mappedSupermarket = modelMapper.map(supermarketDto, Supermarket.class);
 
-        Supermarket supermarketToUpdate = supermarketRepository.findSupermarketById(supermarketId).
-                orElseThrow(() -> {
-                    throw new SupermarketNotFoundException(ExceptionMessages.SUPERMARKET_NOT_FOUND);
-                });
+        Supermarket supermarketToUpdate = supermarketRepository.findById(supermarketId).orElseThrow(() -> {
+            throw new SupermarketNotFoundException(ExceptionMessages.SUPERMARKET_NOT_FOUND);
+        });
 
         supermarketToUpdate.setItems(mappedSupermarket.getItems());
         supermarketToUpdate.setWorkHours(mappedSupermarket.getWorkHours());

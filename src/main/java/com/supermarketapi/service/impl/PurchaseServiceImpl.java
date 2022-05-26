@@ -56,15 +56,11 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public PurchaseDtoResponse buyItemsFromSupermarket(PurchaseDto purchaseDto) {
-        Supermarket supermarket = supermarketRepository.findById(purchaseDto.getSupermarketId())
-                .orElseThrow(() -> new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
+        Supermarket supermarket = supermarketRepository.findById(purchaseDto.getSupermarketId()).orElseThrow(() -> new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
 
         List<Item> items = findItemsByIdFromList(purchaseDto.getItemsIds());
 
-        Purchase newPurchase = purchaseRepository.save(
-                new Purchase(UUID.randomUUID().toString(), supermarket, items,
-                        purchaseDto.getPaymentType(), calculateTotalAmount(items),
-                        purchaseDto.getCashAmount(), LocalTime.now()));
+        Purchase newPurchase = purchaseRepository.save(new Purchase(UUID.randomUUID().toString(), supermarket, items, purchaseDto.getPaymentType(), calculateTotalAmount(items), purchaseDto.getCashAmount(), LocalTime.now()));
 
         return getPurchaseDtoResponse(newPurchase);
     }
@@ -73,8 +69,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     public Page<PurchaseDto> getPurchasesFiltered(@SearchSpec Specification<Purchase> specification, Pageable pageable) {
         Page<Purchase> all = purchaseRepository.findAll(Specification.where(specification), pageable);
 
-        Page<PurchaseDto> purchasesDto = new PageImpl<>(all.stream().map(purchase ->
-                modelMapper.map(purchase, PurchaseDto.class)).collect(Collectors.toList()));
+        Page<PurchaseDto> purchasesDto = new PageImpl<>(all.stream().map(purchase -> modelMapper.map(purchase, PurchaseDto.class)).collect(Collectors.toList()));
 
         if (purchasesDto.isEmpty()) {
             throw new PurchaseNotFoundException(ExceptionMessages.PURCHASE_NOT_FOUND);
@@ -105,23 +100,10 @@ public class PurchaseServiceImpl implements PurchaseService {
         Page<Purchase> purchases = purchaseRepository.findAll(Specification.where(specification), pageable);
 
         try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
-            csvPrinter.printRecord("Supermarket name, Supermarket country, Supermarket city, Supermarket street, " +
-                    " Supermarket working hours, " + " Supermarket phone number, Item name, Item price, Item type," +
-                    "Total money, Given money, Change, Time of payment");
+            csvPrinter.printRecord("Supermarket name, Supermarket country, Supermarket city, Supermarket street, " + " Supermarket working hours, " + " Supermarket phone number, Item name, Item price, Item type," + "Total money, Given money, Change, Time of payment");
 
             for (Purchase purchase : purchases) {
-                csvPrinter.printRecord(purchase.getSupermarket().getName(),
-                        purchase.getSupermarket().getCountry(),
-                        purchase.getSupermarket().getCity(),
-                        purchase.getSupermarket().getStreet(),
-                        purchase.getSupermarket().getWorkHours(),
-                        purchase.getSupermarket().getPhoneNumber(),
-                        purchase.getItems().stream().map(item -> item.getName() + "," + item.getPrice() + "," + item.getItemType()).collect(Collectors.joining(",")),
-                        purchase.getPaymentType(),
-                        purchase.getTotalCashAmount(),
-                        purchase.getMoneyGiven(),
-                        calculateChange(purchase.getMoneyGiven(), purchase.getTotalCashAmount()),
-                        purchase.getTimeOfPayment());
+                csvPrinter.printRecord(purchase.getSupermarket().getName(), purchase.getSupermarket().getCountry(), purchase.getSupermarket().getCity(), purchase.getSupermarket().getStreet(), purchase.getSupermarket().getWorkHours(), purchase.getSupermarket().getPhoneNumber(), purchase.getItems().stream().map(item -> item.getName() + "," + item.getPrice() + "," + item.getItemType()).collect(Collectors.joining(",")), purchase.getPaymentType(), purchase.getTotalCashAmount(), purchase.getMoneyGiven(), calculateChange(purchase.getMoneyGiven(), purchase.getTotalCashAmount()), purchase.getTimeOfPayment());
             }
         } catch (IOException exception) {
             throw new IOException(CANNOT_EXPORT_FILE);
@@ -167,14 +149,10 @@ public class PurchaseServiceImpl implements PurchaseService {
     private Purchase createUserFromCsvFile(String[] metadata, HashMap<String, Integer> columns) {
         Purchase purchase = new Purchase();
 
-        purchase.setSupermarket(supermarketRepository.findSupermarketById(metadata[columns.get("supermarket")]).
-                orElseThrow(() -> {
-                    throw new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND);
-                }));
-        purchase.setItems(itemRepository.findItemsById(metadata[columns.get("items")]).
-                orElseThrow(() -> {
-                    throw new ItemNotFoundException(ITEM_NOT_FOUND);
-                }));
+        purchase.setSupermarket(supermarketRepository.findById(metadata[columns.get("supermarket")]).orElseThrow(() -> {
+            throw new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND);
+        }));
+        purchase.setItems(findItemsByIdFromList(Collections.singletonList(metadata[columns.get("items")])));
         purchase.setPaymentType(PaymentType.valueOf(metadata[columns.get("paymentType")]));
         purchase.setTotalCashAmount(Double.parseDouble(metadata[columns.get("totalCashAmount")]));
         purchase.setMoneyGiven(Double.parseDouble(metadata[columns.get("moneyGiven")]));
@@ -194,13 +172,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     private PurchaseDtoResponse getPurchaseDtoResponse(Purchase purchase) {
-        return new PurchaseDtoResponse(modelMapper.map(purchase.getSupermarket(), SupermarketDto.class),
-                mapItemsToItemsDto(purchase.getItems()),
-                purchase.getPaymentType(),
-                purchase.getTotalCashAmount(),
-                purchase.getMoneyGiven(),
-                calculateChange(purchase.getMoneyGiven(), purchase.getTotalCashAmount()),
-                purchase.getTimeOfPayment());
+        return new PurchaseDtoResponse(modelMapper.map(purchase.getSupermarket(), SupermarketDto.class), mapItemsToItemsDto(purchase.getItems()), purchase.getPaymentType(), purchase.getTotalCashAmount(), purchase.getMoneyGiven(), calculateChange(purchase.getMoneyGiven(), purchase.getTotalCashAmount()), purchase.getTimeOfPayment());
     }
 
     private List<String> mapItemsIdToString(List<Item> items) {

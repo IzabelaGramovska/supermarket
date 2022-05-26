@@ -66,8 +66,7 @@ class PurchaseServiceImplTest {
         itemTwo = new Item(UUID.randomUUID().toString(), "Coca Cola", 1.45, ItemType.DRINKS);
         items.add(itemOne);
         items.add(itemTwo);
-        supermarket = new Supermarket(UUID.randomUUID().toString(), "Fantastico", "Bulgaria", "Sofia",
-                "Veliko Turnovo 73", "0882421474", "08:00-22:00", items);
+        supermarket = new Supermarket(UUID.randomUUID().toString(), "Fantastico", "Bulgaria", "Sofia", "Veliko Turnovo 73", "0882421474", "08:00-22:00", items);
         purchaseOne = new Purchase(UUID.randomUUID().toString(), supermarket, items, PaymentType.CASH, 20, 100, LocalTime.now());
         Purchase purchaseTwo = new Purchase(UUID.randomUUID().toString(), supermarket, items, PaymentType.CASH, 20, 50, LocalTime.now());
     }
@@ -93,13 +92,11 @@ class PurchaseServiceImplTest {
 
     @Test
     void buyItemsFromSupermarketThrowsException() {
-        Mockito.when(supermarketRepository.findById(supermarket.getId())).
-                thenThrow(new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
+        Mockito.when(supermarketRepository.findById(supermarket.getId())).thenThrow(new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
 
         PurchaseDto purchaseDto = new PurchaseDto(supermarket.getId(), itemIds, PaymentType.CASH, 100.0);
 
-        Throwable exception = assertThrows(SupermarketNotFoundException.class,
-                () -> underTest.buyItemsFromSupermarket(purchaseDto));
+        Throwable exception = assertThrows(SupermarketNotFoundException.class, () -> underTest.buyItemsFromSupermarket(purchaseDto));
 
         assertThat(SUPERMARKET_NOT_FOUND).isEqualTo(exception.getMessage());
     }

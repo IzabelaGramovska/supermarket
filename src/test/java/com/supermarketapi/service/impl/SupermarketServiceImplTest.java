@@ -53,25 +53,22 @@ class SupermarketServiceImplTest {
     private Supermarket supermarket;
     private SupermarketDto supermarketDto;
     private List<String> itemIds;
-    private List<Item> itemList;
     private Item itemOne;
     private Item itemTwo;
 
 
     @BeforeEach
     void setUp() {
-        supermarketDto = new SupermarketDto("Kaufland", "Bulgaria", "Sofia",
-                "Knyaginya Klementina 189", "0895678900", "07:00-22:30");
+        supermarketDto = new SupermarketDto("Kaufland", "Bulgaria", "Sofia", "Knyaginya Klementina 189", "0895678900", "07:00-22:30");
 
         itemIds = new ArrayList<>();
-        itemList = new ArrayList<>();
+        List<Item> itemList = new ArrayList<>();
         itemOne = new Item(UUID.randomUUID().toString(), "Pizza", 1.20, ItemType.FOOD);
         itemTwo = new Item(UUID.randomUUID().toString(), "Orange juice", 3.10, ItemType.DRINKS);
         itemList.add(itemOne);
         itemList.add(itemTwo);
 
-        supermarket = new Supermarket(UUID.randomUUID().toString(), "Kaufland", "Bulgaria", "Sofia",
-                "Knyaginya Klementina 189", "0895678900", "07:00-22:30", itemList);
+        supermarket = new Supermarket(UUID.randomUUID().toString(), "Kaufland", "Bulgaria", "Sofia", "Knyaginya Klementina 189", "0895678900", "07:00-22:30", itemList);
 
         Mockito.when(modelMapper.map(supermarketDto, Supermarket.class)).thenReturn(supermarket);
         Mockito.when(modelMapper.map(supermarket, SupermarketDto.class)).thenReturn(supermarketDto);
@@ -93,11 +90,9 @@ class SupermarketServiceImplTest {
 
     @Test
     void createSupermarketThrowsException() {
-        Mockito.when(supermarketRepository.existsSupermarketByName(supermarket.getName())).
-                thenReturn(true).thenThrow(new SupermarketAlreadyExists(SUPERMARKET_ALREADY_EXISTS));
+        Mockito.when(supermarketRepository.existsSupermarketByName(supermarket.getName())).thenReturn(true).thenThrow(new SupermarketAlreadyExists(SUPERMARKET_ALREADY_EXISTS));
 
-        Throwable exception = assertThrows(SupermarketAlreadyExists.class,
-                () -> underTest.createSupermarket(supermarketDto));
+        Throwable exception = assertThrows(SupermarketAlreadyExists.class, () -> underTest.createSupermarket(supermarketDto));
 
         assertThat(SUPERMARKET_ALREADY_EXISTS).isEqualTo(exception.getMessage());
     }
@@ -112,24 +107,21 @@ class SupermarketServiceImplTest {
         itemIds.add(itemOne.getId());
         itemIds.add(itemTwo.getId());
 
-        AddItemsToSupermarketDtoResponse addItemsToSupermarketDtoResponse =
-                underTest.addItemsToSupermarket(new AddItemsToSupermarketDto(supermarket.getId(), itemIds));
+        AddItemsToSupermarketDtoResponse addItemsToSupermarketDtoResponse = underTest.addItemsToSupermarket(new AddItemsToSupermarketDto(supermarket.getId(), itemIds));
 
         assertThat(addItemsToSupermarketDtoResponse.getItemsNames().size()).isEqualTo(itemIds.size());
     }
 
     @Test
     void addItemsToSupermarketThrowsException() {
-        Mockito.when(supermarketRepository.findSupermarketById(supermarket.getId())).
-                thenThrow(new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
+        Mockito.when(supermarketRepository.findById(supermarket.getId())).thenThrow(new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
         Mockito.when(itemRepository.findById(itemOne.getId())).thenReturn(Optional.of(itemOne));
         Mockito.when(itemRepository.findById(itemTwo.getId())).thenReturn(Optional.of(itemTwo));
 
         itemIds.add(itemOne.getId());
         itemIds.add(itemTwo.getId());
 
-        Throwable exception = assertThrows(SupermarketNotFoundException.class,
-                () -> underTest.addItemsToSupermarket(new AddItemsToSupermarketDto(supermarket.getId(), itemIds)));
+        Throwable exception = assertThrows(SupermarketNotFoundException.class, () -> underTest.addItemsToSupermarket(new AddItemsToSupermarketDto(supermarket.getId(), itemIds)));
 
         assertThat(SUPERMARKET_NOT_FOUND).isEqualTo(exception.getMessage());
     }
@@ -155,7 +147,7 @@ class SupermarketServiceImplTest {
 
     @Test
     void supermarketUpdateShouldUpdateSupermarket() {
-        Mockito.when(supermarketRepository.findSupermarketById(supermarket.getId())).thenReturn(Optional.of(supermarket));
+        Mockito.when(supermarketRepository.findById(supermarket.getId())).thenReturn(Optional.of(supermarket));
         Mockito.when(supermarketRepository.save(Mockito.any())).thenReturn(supermarket);
 
         SupermarketDto newSupermarket = underTest.supermarketUpdate(supermarketDto, supermarket.getId());
@@ -170,11 +162,9 @@ class SupermarketServiceImplTest {
 
     @Test
     void setSupermarketUpdateThrowsException() {
-        Mockito.when(supermarketRepository.findSupermarketById(supermarket.getId())).
-                thenThrow(new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
+        Mockito.when(supermarketRepository.findById(supermarket.getId())).thenThrow(new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
 
-        Throwable exception = assertThrows(SupermarketNotFoundException.class,
-                () -> underTest.supermarketUpdate(supermarketDto, supermarket.getId()));
+        Throwable exception = assertThrows(SupermarketNotFoundException.class, () -> underTest.supermarketUpdate(supermarketDto, supermarket.getId()));
 
         assertThat(SUPERMARKET_NOT_FOUND).isEqualTo(exception.getMessage());
     }
