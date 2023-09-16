@@ -38,6 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.supermarketapi.common.ExceptionMessages.*;
+import static com.supermarketapi.common.PurchaseAttributes.*;
 
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
@@ -125,17 +126,16 @@ public class PurchaseServiceImpl implements PurchaseService {
             while ((line = br.readLine()) != null) {
                 if (i == 0) {
                     String[] attributes = line.split(",");
-                    columns.put(attributes[0], 0);
-                    columns.put(attributes[1], 1);
-                    columns.put(attributes[2], 2);
-                    columns.put(attributes[3], 3);
-                    columns.put(attributes[4], 4);
-                    columns.put(attributes[5], 5);
+
+                    for (int j = 0; j < 6; j++) {
+                        columns.put(attributes[j], j);
+                    }
+
                 }
 
                 if (i++ != 0) {
                     String[] attributes = line.split(",");
-                    Purchase purchase = createUserFromCsvFile(attributes, columns);
+                    Purchase purchase = createPurchaseFromCsvFile(attributes, columns);
                     purchases.add(purchase);
                 }
             }
@@ -146,17 +146,17 @@ public class PurchaseServiceImpl implements PurchaseService {
         return purchaseRepository.saveAll(purchases);
     }
 
-    private Purchase createUserFromCsvFile(String[] metadata, HashMap<String, Integer> columns) {
+    private Purchase createPurchaseFromCsvFile(String[] metadata, HashMap<String, Integer> columns) {
         Purchase purchase = new Purchase();
 
-        purchase.setSupermarket(supermarketRepository.findById(metadata[columns.get("supermarket")]).orElseThrow(() -> {
+        purchase.setSupermarket(supermarketRepository.findById(metadata[columns.get(SUPERMARKET)]).orElseThrow(() -> {
             throw new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND);
         }));
-        purchase.setItems(findItemsByIdFromList(Collections.singletonList(metadata[columns.get("items")])));
-        purchase.setPaymentType(PaymentType.valueOf(metadata[columns.get("paymentType")]));
-        purchase.setTotalCashAmount(Double.parseDouble(metadata[columns.get("totalCashAmount")]));
-        purchase.setMoneyGiven(Double.parseDouble(metadata[columns.get("moneyGiven")]));
-        purchase.setTimeOfPayment(LocalTime.parse(metadata[columns.get("timeOfPayment")]));
+        purchase.setItems(findItemsByIdFromList(Collections.singletonList(metadata[columns.get(ITEMS)])));
+        purchase.setPaymentType(PaymentType.valueOf(metadata[columns.get(PAYMENT_TYPES)]));
+        purchase.setTotalCashAmount(Double.parseDouble(metadata[columns.get(TOTAL_CASH_AMOUNT)]));
+        purchase.setMoneyGiven(Double.parseDouble(metadata[columns.get(MONEY_GIVEN)]));
+        purchase.setTimeOfPayment(LocalTime.parse(metadata[columns.get(TIME_OF_PAYMENT)]));
 
         return purchase;
     }

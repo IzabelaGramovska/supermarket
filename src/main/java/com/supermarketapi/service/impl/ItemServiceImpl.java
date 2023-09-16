@@ -1,8 +1,6 @@
 package com.supermarketapi.service.impl;
 
-import com.supermarketapi.common.ExceptionMessages;
 import com.supermarketapi.dto.ItemDto;
-import com.supermarketapi.exception.ItemNotFoundException;
 import com.supermarketapi.model.Item;
 import com.supermarketapi.repository.ItemRepository;
 import com.supermarketapi.service.ItemService;
