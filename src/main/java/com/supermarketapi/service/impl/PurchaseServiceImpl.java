@@ -38,7 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.supermarketapi.common.ExceptionMessages.*;
-import static com.supermarketapi.common.PurchaseAttributes.*;
+import static com.supermarketapi.common.PurchaseAttributesMessages.*;
 
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
@@ -127,10 +127,9 @@ public class PurchaseServiceImpl implements PurchaseService {
                 if (i == 0) {
                     String[] attributes = line.split(",");
 
-                    for (int j = 0; j < 6; j++) {
+                    for (int j = 0; j < attributes.length; j++) {
                         columns.put(attributes[j], j);
                     }
-
                 }
 
                 if (i++ != 0) {
@@ -153,7 +152,7 @@ public class PurchaseServiceImpl implements PurchaseService {
             throw new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND);
         }));
         purchase.setItems(findItemsByIdFromList(Collections.singletonList(metadata[columns.get(ITEMS)])));
-        purchase.setPaymentType(PaymentType.valueOf(metadata[columns.get(PAYMENT_TYPES)]));
+        purchase.setPaymentType(PaymentType.valueOf(metadata[columns.get(PAYMENT_TYPE)]));
         purchase.setTotalCashAmount(Double.parseDouble(metadata[columns.get(TOTAL_CASH_AMOUNT)]));
         purchase.setMoneyGiven(Double.parseDouble(metadata[columns.get(MONEY_GIVEN)]));
         purchase.setTimeOfPayment(LocalTime.parse(metadata[columns.get(TIME_OF_PAYMENT)]));
