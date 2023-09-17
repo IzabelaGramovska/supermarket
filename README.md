@@ -7,9 +7,11 @@ Maven 3.8.1
 Spring Boot 2.6.3
 MySQL 8.0.28
 
-Initialization: Firstly you need to clone the git repository:
+Initialization
 
-git clone https://github.com/ivanivanovv13/EndavaFinalExam.git
+Firstly you need to clone the git repository:
+
+git clone https://github.com/IzabelaGramovska/supermarket
 
 After completion of this guide you need to open your Java editor and load clonned resources
 
@@ -18,12 +20,13 @@ After completion of this guide you need to open your Java editor and load clonne
 - Go to `resources/application.properties` and add properties e.g. 
 
 - ```
-  spring.jpa.hibernate.ddl-auto=create
-  spring.datasource.url=jdbc:mysql://localhost:3306/user_db?createDatabaseIfNotExist=true
-  spring.datasource.username= YOUR_USER_NAME_HERE
-  spring.datasource.password= YOUR_PASSWORD_HERE
-  spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL55Dialect
-Go to Application.java
+spring.jpa.hibernate.ddl-auto=update
+spring.datasource.url=jdbc:mysql://localhost:3306/supermarket_db?createDatabaseIfNotExist=true
+spring.datasource.username=root
+spring.datasource.password=1234
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL55Dialect
+
+Go to SupermarketApiApplication.java
 
 Click right button and select Run 'Application'
 
